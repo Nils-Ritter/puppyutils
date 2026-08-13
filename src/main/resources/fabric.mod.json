@@ -29,6 +29,7 @@
 			"environment": "client"
 		}
 	],
+	"accessWidener": "puppyutils.client.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.19.3",
 		"minecraft": "~26.1.2",

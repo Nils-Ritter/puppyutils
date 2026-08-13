@@ -3,7 +3,13 @@
 	"package": "de.puppyutils.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"ExampleClientMixin"
+		"MinecraftClientMixin",
+		"GameRendererMixin",
+		"imgui.MinecraftMixin",
+		"imgui.GameRendererMixin",
+		"MouseMixin",
+		"MinecraftOptionsMixin",
+		"KeyboardInputMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
