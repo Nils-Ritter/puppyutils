@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "debug": true,
+  "maxItems": 32,
+  "speed": 1.5
+}

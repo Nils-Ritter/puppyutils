@@ -1,0 +1,13 @@
+arguments=--init-script /home/nils/.local/share/nvim/mason/packages/jdtls/config_linux/org.eclipse.osgi/57/0/.cp/gradle/init/init.gradle
+auto.sync=false
+build.scans.enabled=false
+connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)
+connection.project.dir=
+eclipse.preferences.version=1
+gradle.user.home=
+java.home=/nix/store/i4y48fdcc99kzw28f9mm4102ji1kx9mx-openjdk-21.0.12+2/lib/openjdk
+jvm.arguments=
+offline.mode=false
+override.workspace.settings=true
+show.console.view=true
+show.executions.view=true
