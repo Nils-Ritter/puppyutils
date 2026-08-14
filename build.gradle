@@ -66,6 +66,13 @@ tasks.withType(JavaCompile).configureEach {
 	it.options.release = 25
 }
 
+tasks.named('runClient') {
+  jvmArgs += [
+    '-DMC_DEBUG_ENABLED=true',
+    '-DMC_DEBUG_PREFER_OPENGL=true'   // or '-DMC_DEBUG_PREFER_VULKAN=true' to test Vulkan path
+  ]
+}
+
 java {
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 	// if it is present.

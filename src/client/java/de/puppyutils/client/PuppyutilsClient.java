@@ -1,18 +1,11 @@
 package de.puppyutils.client;
 
-import com.mojang.authlib.minecraft.MinecraftSessionService;
-import com.mojang.authlib.minecraft.client.MinecraftClient;
-import de.puppyutils.client.failsafes.MovementSpeedWatcher;
 import de.puppyutils.client.macroClasses.farming.vrow.AutoFarmingVrow;
 import de.puppyutils.client.screens.ConfigScreen;
-import de.puppyutils.client.screens.ExampleScreen;
 import de.puppyutils.client.routing.MacroCommands;
 import de.puppyutils.client.routing.WaypointRenderer;
 import de.puppyutils.client.utils.*;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.telemetry.events.WorldLoadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -53,6 +46,7 @@ public class PuppyutilsClient implements ClientModInitializer {
             GLFW.GLFW_KEY_LEFT,
             KeyMapping.Category.MISC
     );
+
     @Override
     public void onInitializeClient() {
         LOGGER.info("Welcome to: \n__________                            ____ ___   __  .__.__          \n" +
