@@ -9,5 +9,22 @@ pluginManagement {
 	}
 }
 
+dependencyResolutionManagement {
+    repositories {
+        maven {
+            name = "Wisp Forest"
+            url = "https://maven.wispforest.io/releases/"
+        }
+        maven {
+            name = "Fabric"
+            url = "https://maven.fabricmc.net/"
+        }
+        mavenCentral()
+        maven {
+            name = "JitPack"
+            url = "https://jitpack.io"
+        }
+    }
+}
 // Should match your modid
 rootProject.name = 'puppyutils'
