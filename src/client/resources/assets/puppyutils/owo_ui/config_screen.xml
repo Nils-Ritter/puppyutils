@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<owo-ui
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/26.1/owo-ui.xsd">
+
+    <components>
+
+        <!-- ========================================================== -->
+        <!-- Root                                                       -->
+        <!-- ========================================================== -->
+
+        <flow-layout
+            id="root"
+            direction="horizontal">
+
+            <children>
+
+                <!-- ================================================== -->
+                <!-- Left sidebar                                      -->
+                <!-- ================================================== -->
+
+                <flow-layout
+                    id="sidebar"
+                    direction="vertical">
+
+                    <children>
+
+                        <!-- ========================================== -->
+                        <!-- Sidebar title                              -->
+                        <!-- ========================================== -->
+
+                        <label id="title">
+                            <text>PuppyUtils</text>
+                        </label>
+
+
+                        <!-- ========================================== -->
+                        <!-- Category navigation                        -->
+                        <!-- ========================================== -->
+
+                        <flow-layout
+                            id="categories"
+                            direction="vertical">
+
+                            <children>
+
+                                <button id="category-general">
+                                    <text>General</text>
+                                </button>
+
+                                <button id="category-mining">
+                                    <text>Mining</text>
+                                </button>
+
+                                <button id="category-farming">
+                                    <text>Farming</text>
+                                </button>
+
+                                <button id="category-combat">
+                                    <text>Combat</text>
+                                </button>
+
+                                <button id="category-rendering">
+                                    <text>Rendering</text>
+                                </button>
+
+                            </children>
+
+                        </flow-layout>
+
+
+                        <!-- ========================================== -->
+                        <!-- Flexible spacer                            -->
+                        <!-- ========================================== -->
+
+                        <flow-layout
+                            id="sidebar-spacer"
+                            direction="vertical">
+
+                            <children>
+                            </children>
+
+                        </flow-layout>
+
+
+                        <!-- ========================================== -->
+                        <!-- Bottom buttons                             -->
+                        <!-- ========================================== -->
+
+                        <flow-layout
+                            id="bottom-buttons"
+                            direction="vertical">
+
+                            <children>
+
+                                <button id="save">
+                                    <text>Save</text>
+                                </button>
+
+                                <button id="reset">
+                                    <text>Reset</text>
+                                </button>
+
+                                <button id="cancel">
+                                    <text>Cancel</text>
+                                </button>
+
+                            </children>
+
+                        </flow-layout>
+
+                    </children>
+
+                </flow-layout>
+
+
+                <!-- ================================================== -->
+                <!-- Main content                                      -->
+                <!-- ================================================== -->
+
+                <flow-layout
+                    id="content"
+                    direction="vertical">
+
+                    <children>
+
+                        <!-- ========================================== -->
+                        <!-- Dynamic options                            -->
+                        <!-- ========================================== -->
+
+                        <flow-layout
+                            id="options"
+                            direction="vertical">
+
+                            <children>
+                            </children>
+
+                        </flow-layout>
+
+                    </children>
+
+                </flow-layout>
+
+            </children>
+
+        </flow-layout>
+
+    </components>
+
+</owo-ui>
