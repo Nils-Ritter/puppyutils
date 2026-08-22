@@ -6,44 +6,50 @@
 
     <components>
 
-        <!-- ========================================================== -->
-        <!-- Root                                                       -->
-        <!-- ========================================================== -->
+        <!-- ====================================================== -->
+        <!-- ROOT                                                    -->
+        <!-- ====================================================== -->
 
         <flow-layout
-            id="root"
-            direction="horizontal">
+            id="screen"
+            direction="vertical">
 
             <children>
 
                 <!-- ================================================== -->
-                <!-- Left sidebar                                      -->
+                <!-- MAIN AREA                                          -->
                 <!-- ================================================== -->
 
                 <flow-layout
-                    id="sidebar"
-                    direction="vertical">
+                    id="main-area"
+                    direction="horizontal">
 
                     <children>
 
                         <!-- ========================================== -->
-                        <!-- Sidebar title                              -->
-                        <!-- ========================================== -->
-
-                        <label id="title">
-                            <text>PuppyUtils</text>
-                        </label>
-
-
-                        <!-- ========================================== -->
-                        <!-- Category navigation                        -->
+                        <!-- SIDEBAR                                    -->
                         <!-- ========================================== -->
 
                         <flow-layout
-                            id="categories"
+                            id="category-bar"
                             direction="vertical">
 
                             <children>
+
+                                <!-- Sidebar header -->
+
+                                <label id="category-title">
+                                    <text>PuppyUtils</text>
+                                </label>
+
+                                <label id="category-subtitle">
+                                    <text>Settings</text>
+                                </label>
+
+
+                                <!-- ================================== -->
+                                <!-- Category buttons                   -->
+                                <!-- ================================== -->
 
                                 <button id="category-general">
                                     <text>General</text>
@@ -67,82 +73,237 @@
 
                             </children>
 
+
+                            <!-- Space between category controls -->
+
+                            <gap>6</gap>
+
+
+                            <!-- Sidebar padding -->
+
+                            <padding>
+                                <top>16</top>
+                                <bottom>16</bottom>
+                                <left>12</left>
+                                <right>12</right>
+                            </padding>
+
+
+                            <!-- Sidebar background -->
+
+                            <surface>
+                                <panel dark="true"/>
+                            </surface>
+
+
+                            <!-- IMPORTANT:
+                                 Fixed width means changing the text
+                                 or button size cannot resize the
+                                 content area. -->
+
+                            <sizing>
+                                <horizontal method="fixed">160</horizontal>
+                                <vertical method="fill">100</vertical>
+                            </sizing>
+
                         </flow-layout>
 
 
                         <!-- ========================================== -->
-                        <!-- Flexible spacer                            -->
+                        <!-- CONTENT AREA                               -->
                         <!-- ========================================== -->
 
                         <flow-layout
-                            id="sidebar-spacer"
-                            direction="vertical">
-
-                            <children>
-                            </children>
-
-                        </flow-layout>
-
-
-                        <!-- ========================================== -->
-                        <!-- Bottom buttons                             -->
-                        <!-- ========================================== -->
-
-                        <flow-layout
-                            id="bottom-buttons"
+                            id="content-area"
                             direction="vertical">
 
                             <children>
 
-                                <button id="save">
-                                    <text>Save</text>
-                                </button>
+                                <!-- ================================== -->
+                                <!-- HEADER                              -->
+                                <!-- ================================== -->
 
-                                <button id="reset">
-                                    <text>Reset</text>
-                                </button>
+                                <flow-layout
+                                    id="content-header"
+                                    direction="vertical">
 
-                                <button id="cancel">
-                                    <text>Cancel</text>
-                                </button>
+                                    <children>
+
+                                        <label id="content-title">
+                                            <text>General</text>
+                                        </label>
+
+                                        <label id="content-description">
+                                            <text>General PuppyUtils settings.</text>
+                                        </label>
+
+                                    </children>
+
+                                    <gap>4</gap>
+
+                                    <padding>
+                                        <bottom>12</bottom>
+                                    </padding>
+
+                                </flow-layout>
+
+
+                                <!-- ================================== -->
+                                <!-- OPTIONS                             -->
+                                <!-- ================================== -->
+
+                                <!--
+                                    Java dynamically inserts the
+                                    modern toggles, sliders and
+                                    buttons into this container.
+
+                                    Fill sizing ensures the controls
+                                    occupy the content area rather
+                                    than changing the sidebar width.
+                                -->
+
+                                <flow-layout
+                                    id="options"
+                                    direction="vertical">
+
+                                    <children>
+                                    </children>
+
+                                    <gap>8</gap>
+
+                                    <padding>
+                                        <top>2</top>
+                                        <bottom>2</bottom>
+                                        <left>0</left>
+                                        <right>0</right>
+                                    </padding>
+
+                                    <sizing>
+                                        <horizontal method="fill">100</horizontal>
+                                        <vertical method="fill">100</vertical>
+                                    </sizing>
+
+                                </flow-layout>
 
                             </children>
+
+
+                            <gap>8</gap>
+
+
+                            <padding>
+                                <top>20</top>
+                                <bottom>16</bottom>
+                                <left>20</left>
+                                <right>20</right>
+                            </padding>
+
+
+                            <sizing>
+                                <horizontal method="fill">100</horizontal>
+                                <vertical method="fill">100</vertical>
+                            </sizing>
 
                         </flow-layout>
 
                     </children>
 
+
+                    <!-- No horizontal growth caused by children -->
+
+                    <gap>0</gap>
+
+
+                    <sizing>
+                        <horizontal method="fill">100</horizontal>
+                        <vertical method="fill">100</vertical>
+                    </sizing>
+
                 </flow-layout>
 
 
                 <!-- ================================================== -->
-                <!-- Main content                                      -->
+                <!-- BOTTOM BAR                                         -->
                 <!-- ================================================== -->
 
                 <flow-layout
-                    id="content"
-                    direction="vertical">
+                    id="bottom-bar"
+                    direction="horizontal">
 
                     <children>
 
                         <!-- ========================================== -->
-                        <!-- Dynamic options                            -->
+                        <!-- SAVE                                       -->
                         <!-- ========================================== -->
 
-                        <flow-layout
-                            id="options"
-                            direction="vertical">
+                        <button id="save">
+                            <text>Save</text>
+                        </button>
 
-                            <children>
-                            </children>
 
-                        </flow-layout>
+                        <!-- ========================================== -->
+                        <!-- CLEAR                                      -->
+                        <!-- ========================================== -->
+
+                        <button id="reset">
+                            <text>Clear</text>
+                        </button>
+
+
+                        <!-- ========================================== -->
+                        <!-- CANCEL                                     -->
+                        <!-- ========================================== -->
+
+                        <button id="cancel">
+                            <text>Cancel</text>
+                        </button>
 
                     </children>
+
+
+                    <gap>8</gap>
+
+
+                    <!-- Bottom-left alignment -->
+
+                    <padding>
+                        <top>8</top>
+                        <bottom>14</bottom>
+                        <left>16</left>
+                        <right>16</right>
+                    </padding>
+
+
+                    <horizontal-alignment>left</horizontal-alignment>
+
+
+                    <sizing>
+                        <horizontal method="fill">100</horizontal>
+                        <vertical method="content"/>
+                    </sizing>
 
                 </flow-layout>
 
             </children>
+
+
+            <!-- ====================================================== -->
+            <!-- ROOT SIZING                                            -->
+            <!-- ====================================================== -->
+
+            <sizing>
+                <horizontal method="fill">100</horizontal>
+                <vertical method="fill">100</vertical>
+            </sizing>
+
+
+            <!-- ====================================================== -->
+            <!-- ROOT BACKGROUND                                        -->
+            <!-- ====================================================== -->
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
 
         </flow-layout>
 

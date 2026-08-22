@@ -1,28 +1,59 @@
 package de.puppyutils.client.screens;
 
-import de.puppyutils.client.utils.ConfigManager;
 import de.puppyutils.Puppyutils;
 import de.puppyutils.client.utils.Config;
+import de.puppyutils.client.utils.ConfigManager;
 
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.CheckboxComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.component.SliderComponent;
 import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.UIContainers;
+import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.Sizing;
-import io.wispforest.owo.ui.core.Surface;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
+import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
+
+
 public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
     private final Config workingConfig;
-
     private Category selectedCategory;
+
+
+    /*
+     * ============================================================
+     * Colors
+     * ============================================================
+     */
+
+    private static final int COLOR_PANEL =
+            0xD91A1F29;
+
+    private static final int COLOR_BUTTON =
+            0xFF252B36;
+
+    private static final int COLOR_BUTTON_HOVER =
+            0xFF303846;
+
+    private static final int COLOR_BUTTON_DISABLED =
+            0xFF171B22;
+
+    private static final int COLOR_ACCENT =
+            0xFF6C8CFF;
+
+    private static final int COLOR_ACCENT_HOVER =
+            0xFF829DFF;
+
+    private static final int COLOR_TEXT =
+            0xFFFFFFFF;
 
 
     /*
@@ -75,71 +106,15 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
     /*
      * ============================================================
-     * owo-ui
+     * Build
      * ============================================================
-     *
-     * BaseUIModelScreen requires build().
-     *
-     * The actual static layout is supplied by config_screen.xml.
-     * We populate the "options" container dynamically below.
      */
+
     @Override
     protected void build(FlowLayout root) {
-        root.surface(
-                io.wispforest.owo.ui.core.Surface.VANILLA_TRANSLUCENT
-        );
-
-        FlowLayout sidebar = root.childById(
-                FlowLayout.class,
-                "sidebar"
-        );
-
-        sidebar.horizontalSizing(
-                Sizing.fixed(150)
-        );
-
-        FlowLayout content = root.childById(
-                FlowLayout.class,
-                "content"
-        );
-
-        content.horizontalSizing(
-                Sizing.fill(100)
-        );
-
-        FlowLayout categories = root.childById(
-                FlowLayout.class,
-                "categories"
-        );
-
-        categories.horizontalSizing(
-                Sizing.fill(100)
-        );
-
-        categories.childById(
-                ButtonComponent.class,
-                "category-general"
-        ).horizontalSizing(Sizing.fill(100));
-
-        categories.childById(
-                ButtonComponent.class,
-                "category-mining"
-        ).horizontalSizing(Sizing.fill(100));
-
-        categories.childById(
-                ButtonComponent.class,
-                "category-farming"
-        ).horizontalSizing(Sizing.fill(100));
-
-        categories.childById(
-                ButtonComponent.class,
-                "category-combat"
-        ).horizontalSizing(Sizing.fill(100));
-
-        categories.childById(
-                ButtonComponent.class,
-                "category-rendering"
-        ).horizontalSizing(Sizing.fill(100));
+        /*
+         * Everything static is loaded from XML.
+         */
     }
 
 
@@ -147,16 +122,23 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
     protected void init() {
         super.init();
 
+        if (this.uiAdapter == null) {
+            return;
+        }
+
+        styleStaticButtons();
+
         bindCategoryButtons();
         bindBottomButtons();
 
+        updateCategoryHeader();
         showCategory(selectedCategory);
     }
 
 
     /*
      * ============================================================
-     * Root / component helpers
+     * Helpers
      * ============================================================
      */
 
@@ -181,6 +163,77 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
     }
 
 
+    private LabelComponent label(String id) {
+        return root().childById(
+                LabelComponent.class,
+                id
+        );
+    }
+
+
+    /*
+     * ============================================================
+     * Static buttons
+     * ============================================================
+     */
+
+    private void styleStaticButtons() {
+
+        styleCategoryButton("category-general");
+        styleCategoryButton("category-mining");
+        styleCategoryButton("category-farming");
+        styleCategoryButton("category-combat");
+        styleCategoryButton("category-rendering");
+
+
+        button("save")
+                .renderer(
+                        modernButtonRenderer(
+                                COLOR_ACCENT,
+                                COLOR_ACCENT_HOVER,
+                                COLOR_BUTTON_DISABLED
+                        )
+                )
+                .textShadow(false);
+
+
+        button("reset")
+                .renderer(
+                        modernButtonRenderer(
+                                COLOR_BUTTON,
+                                COLOR_BUTTON_HOVER,
+                                COLOR_BUTTON_DISABLED
+                        )
+                )
+                .textShadow(false);
+
+
+        button("cancel")
+                .renderer(
+                        modernButtonRenderer(
+                                COLOR_BUTTON,
+                                COLOR_BUTTON_HOVER,
+                                COLOR_BUTTON_DISABLED
+                        )
+                )
+                .textShadow(false);
+    }
+
+
+    private void styleCategoryButton(String id) {
+
+        button(id)
+                .renderer(
+                        modernButtonRenderer(
+                                COLOR_BUTTON,
+                                COLOR_BUTTON_HOVER,
+                                COLOR_BUTTON_DISABLED
+                        )
+                )
+                .textShadow(false);
+    }
+
+
     /*
      * ============================================================
      * Category buttons
@@ -190,28 +243,33 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
     private void bindCategoryButtons() {
 
         button("category-general")
-                .onPress(button ->
-                        showCategory(Category.GENERAL)
+                .onPress(
+                        ignored ->
+                                showCategory(Category.GENERAL)
                 );
 
         button("category-mining")
-                .onPress(button ->
-                        showCategory(Category.MINING)
+                .onPress(
+                        ignored ->
+                                showCategory(Category.MINING)
                 );
 
         button("category-farming")
-                .onPress(button ->
-                        showCategory(Category.FARMING)
+                .onPress(
+                        ignored ->
+                                showCategory(Category.FARMING)
                 );
 
         button("category-combat")
-                .onPress(button ->
-                        showCategory(Category.COMBAT)
+                .onPress(
+                        ignored ->
+                                showCategory(Category.COMBAT)
                 );
 
         button("category-rendering")
-                .onPress(button ->
-                        showCategory(Category.RENDERING)
+                .onPress(
+                        ignored ->
+                                showCategory(Category.RENDERING)
                 );
     }
 
@@ -226,16 +284,13 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
         this.selectedCategory = category;
 
+        updateCategoryHeader();
+
         FlowLayout options = options();
 
-        /*
-         * Remove the old category's widgets.
-         */
         options.clearChildren();
 
-        /*
-         * Build the newly selected category.
-         */
+
         switch (category) {
 
             case GENERAL ->
@@ -258,39 +313,79 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
     /*
      * ============================================================
+     * Header
+     * ============================================================
+     */
+
+    private void updateCategoryHeader() {
+
+        String title;
+        String description;
+
+        switch (selectedCategory) {
+
+            case GENERAL -> {
+                title = "General";
+                description =
+                        "General PuppyUtils settings.";
+            }
+
+            case MINING -> {
+                title = "Mining";
+                description =
+                        "Configure automatic mining.";
+            }
+
+            case FARMING -> {
+                title = "Farming";
+                description =
+                        "Configure automatic farming.";
+            }
+
+            case COMBAT -> {
+                title = "Combat";
+                description =
+                        "Configure automatic combat.";
+            }
+
+            case RENDERING -> {
+                title = "Rendering";
+                description =
+                        "Configure PuppyUtils rendering.";
+            }
+
+            default -> {
+                title = "PuppyUtils";
+                description = "";
+            }
+        }
+
+        label("content-title").text(
+                Component.literal(title)
+        );
+
+        label("content-description").text(
+                Component.literal(description)
+        );
+    }
+
+
+    /*
+     * ============================================================
      * General
      * ============================================================
      */
 
     private void buildGeneral(FlowLayout options) {
 
-        addHeading(
-                options,
-                "General"
+        options.child(
+                createModernToggle(
+                        "Enable PuppyUtils",
+                        workingConfig.enabled,
+                        value ->
+                                workingConfig.enabled = value
+                )
         );
-
-        addDescription(
-                options,
-                "General PuppyUtils settings."
-        );
-
-
-        CheckboxComponent enabled =
-                UIComponents.checkbox(
-                        Component.literal(
-                                "Enable PuppyUtils"
-                        )
-                );
-
-        enabled.checked(
-                workingConfig.enabled
-        );
-
-        enabled.onChanged(value -> {
-            workingConfig.enabled = value;
-        });
-
-        options.child(enabled);
     }
 
 
@@ -302,45 +397,17 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
     private void buildMining(FlowLayout options) {
 
-        addHeading(
-                options,
-                "Mining"
+        options.child(
+                createModernToggle(
+                        "Enable Auto Mining",
+                        workingConfig.mining.autoMine,
+                        value ->
+                                workingConfig.mining.autoMine = value
+                )
         );
-
-        addDescription(
-                options,
-                "Configure automatic mining."
-        );
-
-
-        /*
-         * Auto mine
-         */
-
-        CheckboxComponent autoMine =
-                UIComponents.checkbox(
-                        Component.literal(
-                                "Enable Auto Mining"
-                        )
-                );
-
-        autoMine.checked(
-                workingConfig.mining.autoMine
-        );
-
-        autoMine.onChanged(value -> {
-            workingConfig.mining.autoMine = value;
-        });
-
-        options.child(autoMine);
-
-
-        /*
-         * Mining speed
-         */
 
         options.child(
-                createSlider(
+                createModernSlider(
                         "Mining Speed",
                         workingConfig.mining.miningSpeed,
                         value ->
@@ -348,13 +415,8 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
                 )
         );
 
-
-        /*
-         * Mining radius
-         */
-
         options.child(
-                createSlider(
+                createModernSlider(
                         "Mining Radius",
                         workingConfig.mining.miningRadius,
                         value ->
@@ -363,17 +425,13 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
         );
 
 
-        /*
-         * Mining mode
-         */
-
         ButtonComponent miningMode =
                 createEnumButton(
                         "Mining Mode",
                         workingConfig.mining.mode
                 );
 
-        miningMode.onPress(button -> {
+        miningMode.onPress(ignored -> {
 
             workingConfig.mining.mode =
                     nextEnum(
@@ -390,26 +448,14 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
         options.child(miningMode);
 
 
-        /*
-         * Only ores
-         */
-
-        CheckboxComponent onlyOres =
-                UIComponents.checkbox(
-                        Component.literal(
-                                "Only Mine Ores"
-                        )
-                );
-
-        onlyOres.checked(
-                workingConfig.mining.onlyOres
+        options.child(
+                createModernToggle(
+                        "Only Mine Ores",
+                        workingConfig.mining.onlyOres,
+                        value ->
+                                workingConfig.mining.onlyOres = value
+                )
         );
-
-        onlyOres.onChanged(value -> {
-            workingConfig.mining.onlyOres = value;
-        });
-
-        options.child(onlyOres);
     }
 
 
@@ -421,45 +467,17 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
     private void buildFarming(FlowLayout options) {
 
-        addHeading(
-                options,
-                "Farming"
+        options.child(
+                createModernToggle(
+                        "Enable Auto Farming",
+                        workingConfig.farming.autoFarm,
+                        value ->
+                                workingConfig.farming.autoFarm = value
+                )
         );
-
-        addDescription(
-                options,
-                "Configure automatic farming."
-        );
-
-
-        /*
-         * Auto farm
-         */
-
-        CheckboxComponent autoFarm =
-                UIComponents.checkbox(
-                        Component.literal(
-                                "Enable Auto Farming"
-                        )
-                );
-
-        autoFarm.checked(
-                workingConfig.farming.autoFarm
-        );
-
-        autoFarm.onChanged(value -> {
-            workingConfig.farming.autoFarm = value;
-        });
-
-        options.child(autoFarm);
-
-
-        /*
-         * Farming radius
-         */
 
         options.child(
-                createSlider(
+                createModernSlider(
                         "Farming Radius",
                         workingConfig.farming.radius,
                         value ->
@@ -467,32 +485,15 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
                 )
         );
 
-
-        /*
-         * Replant
-         */
-
-        CheckboxComponent replant =
-                UIComponents.checkbox(
-                        Component.literal(
-                                "Automatically Replant"
-                        )
-                );
-
-        replant.checked(
-                workingConfig.farming.replant
+        options.child(
+                createModernToggle(
+                        "Automatically Replant",
+                        workingConfig.farming.replant,
+                        value ->
+                                workingConfig.farming.replant = value
+                )
         );
 
-        replant.onChanged(value -> {
-            workingConfig.farming.replant = value;
-        });
-
-        options.child(replant);
-
-
-        /*
-         * Farming mode
-         */
 
         ButtonComponent mode =
                 createEnumButton(
@@ -500,7 +501,7 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
                         workingConfig.farming.mode
                 );
 
-        mode.onPress(button -> {
+        mode.onPress(ignored -> {
 
             workingConfig.farming.mode =
                     nextEnum(
@@ -526,45 +527,17 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
     private void buildCombat(FlowLayout options) {
 
-        addHeading(
-                options,
-                "Combat"
+        options.child(
+                createModernToggle(
+                        "Enable Auto Attack",
+                        workingConfig.combat.autoAttack,
+                        value ->
+                                workingConfig.combat.autoAttack = value
+                )
         );
-
-        addDescription(
-                options,
-                "Configure automatic combat."
-        );
-
-
-        /*
-         * Auto attack
-         */
-
-        CheckboxComponent autoAttack =
-                UIComponents.checkbox(
-                        Component.literal(
-                                "Enable Auto Attack"
-                        )
-                );
-
-        autoAttack.checked(
-                workingConfig.combat.autoAttack
-        );
-
-        autoAttack.onChanged(value -> {
-            workingConfig.combat.autoAttack = value;
-        });
-
-        options.child(autoAttack);
-
-
-        /*
-         * Attack range
-         */
 
         options.child(
-                createSlider(
+                createModernSlider(
                         "Attack Range",
                         workingConfig.combat.attackRange,
                         value ->
@@ -573,17 +546,13 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
         );
 
 
-        /*
-         * Combat mode
-         */
-
         ButtonComponent mode =
                 createEnumButton(
                         "Combat Mode",
                         workingConfig.combat.mode
                 );
 
-        mode.onPress(button -> {
+        mode.onPress(ignored -> {
 
             workingConfig.combat.mode =
                     nextEnum(
@@ -609,45 +578,17 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
     private void buildRendering(FlowLayout options) {
 
-        addHeading(
-                options,
-                "Rendering"
+        options.child(
+                createModernToggle(
+                        "Render Particles",
+                        workingConfig.rendering.particles,
+                        value ->
+                                workingConfig.rendering.particles = value
+                )
         );
-
-        addDescription(
-                options,
-                "Configure PuppyUtils rendering."
-        );
-
-
-        /*
-         * Particles
-         */
-
-        CheckboxComponent particles =
-                UIComponents.checkbox(
-                        Component.literal(
-                                "Render Particles"
-                        )
-                );
-
-        particles.checked(
-                workingConfig.rendering.particles
-        );
-
-        particles.onChanged(value -> {
-            workingConfig.rendering.particles = value;
-        });
-
-        options.child(particles);
-
-
-        /*
-         * Render distance
-         */
 
         options.child(
-                createSlider(
+                createModernSlider(
                         "Render Distance",
                         workingConfig.rendering.renderDistance,
                         value ->
@@ -656,17 +597,13 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
         );
 
 
-        /*
-         * Render mode
-         */
-
         ButtonComponent mode =
                 createEnumButton(
                         "Render Mode",
                         workingConfig.rendering.mode
                 );
 
-        mode.onPress(button -> {
+        mode.onPress(ignored -> {
 
             workingConfig.rendering.mode =
                     nextEnum(
@@ -686,50 +623,212 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
     /*
      * ============================================================
-     * Slider helper
+     * Modern Toggle
      * ============================================================
      */
-    private FlowLayout createSlider(
-            String name,
-            double initialValue,
-            java.util.function.DoubleConsumer consumer
+    private FlowLayout createModernToggle(
+            String text,
+            boolean initialValue,
+            Consumer<Boolean> consumer
     ) {
-        FlowLayout row = UIContainers.horizontalFlow(
-                Sizing.fill(100),
-                Sizing.fixed(20)
-        );
 
-        LabelComponent label = UIComponents.label(
-                Component.literal(
-                        formatSliderText(name, initialValue)
+        FlowLayout row =
+                UIContainers.horizontalFlow(
+                        Sizing.fill(100),
+                        Sizing.fixed(32)
+                );
+
+        row.padding(
+                io.wispforest.owo.ui.core.Insets.of(
+                        6,
+                        10,
+                        6,
+                        10
                 )
         );
 
-        // Give the label a fixed/known width so the slider has
-        // an unambiguous amount of space remaining.
-        label.horizontalSizing(Sizing.fixed(120));
-
-        SliderComponent slider = UIComponents.slider(
-                Sizing.fill(100)
+        row.surface(
+                io.wispforest.owo.ui.core.Surface.flat(
+                        COLOR_PANEL
+                )
         );
+
+
+        LabelComponent label =
+                UIComponents.label(
+                        Component.literal(text)
+                );
+
+        label.color(
+                Color.ofArgb(COLOR_TEXT)
+        );
+
+
+        /*
+         * Store the state separately so the renderer can read it.
+         */
+        boolean[] state =
+                new boolean[]{initialValue};
+
+
+        /*
+         * Create the button first without referencing it
+         * from its own initialization lambda.
+         */
+        ButtonComponent toggle =
+                UIComponents.button(
+                        Component.empty(),
+                        ignored -> {
+
+                            state[0] = !state[0];
+
+                            consumer.accept(
+                                    state[0]
+                            );
+
+                            /*
+                             * The renderer already references the same
+                             * state array, so it automatically reflects
+                             * the new value.
+                             */
+                        }
+                );
+
+
+        toggle.sizing(
+                Sizing.fixed(46),
+                Sizing.fixed(22)
+        );
+
+        toggle.textShadow(false);
+
+
+        /*
+         * Install the renderer after the button has been created.
+         */
+        toggle.renderer(
+                modernToggleRenderer(
+                        state
+                )
+        );
+
+
+        /*
+         * Label on the left.
+         */
+        row.child(label);
+
+
+        /*
+         * Flexible spacer keeps the toggle pinned to the right.
+         */
+        FlowLayout spacer =
+                UIContainers.horizontalFlow(
+                        Sizing.fill(100),
+                        Sizing.fixed(1)
+                );
+
+        row.child(spacer);
+
+
+        /*
+         * Toggle on the right.
+         */
+        row.child(toggle);
+
+
+        return row;
+    }
+
+
+    /*
+     * ============================================================
+     * Modern Slider
+     * ============================================================
+     */
+
+    private FlowLayout createModernSlider(
+            String name,
+            double initialValue,
+            DoubleConsumer consumer
+    ) {
+
+        FlowLayout row =
+                UIContainers.horizontalFlow(
+                        Sizing.fill(100),
+                        Sizing.fixed(34)
+                );
+
+        row.padding(
+                io.wispforest.owo.ui.core.Insets.of(
+                        6,
+                        10,
+                        6,
+                        10
+                )
+        );
+
+        row.surface(
+                io.wispforest.owo.ui.core.Surface.flat(
+                        COLOR_PANEL
+                )
+        );
+
+
+        LabelComponent label =
+                UIComponents.label(
+                        Component.literal(
+                                formatSliderText(
+                                        name,
+                                        initialValue
+                                )
+                        )
+                );
+
+        label.color(
+                Color.ofArgb(COLOR_TEXT)
+        );
+
+
+        SliderComponent slider =
+                UIComponents.slider(
+                        Sizing.fill(60)
+                );
 
         slider.value(initialValue);
 
+
         slider.onChanged().subscribe(value -> {
+
             label.text(
                     Component.literal(
-                            formatSliderText(name, value)
+                            formatSliderText(
+                                    name,
+                                    value
+                            )
                     )
             );
 
             consumer.accept(value);
         });
 
+
         row.child(label);
+
+
+        FlowLayout spacer =
+                UIContainers.horizontalFlow(
+                        Sizing.fill(100),
+                        Sizing.fixed(1)
+                );
+
+        row.child(spacer);
         row.child(slider);
+
 
         return row;
     }
+
 
     private String formatSliderText(
             String name,
@@ -745,7 +844,7 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
     /*
      * ============================================================
-     * Enum buttons
+     * Enum Button
      * ============================================================
      */
 
@@ -754,17 +853,36 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
             Enum<?> value
     ) {
 
-        return UIComponents.button(
-                Component.literal(
-                        formatEnumButtonText(
-                                name,
-                                value
-                        )
-                ),
-                ignored -> {
-                    // The actual handler is attached by the caller.
-                }
+        ButtonComponent button =
+                UIComponents.button(
+                        Component.literal(
+                                formatEnumButtonText(
+                                        name,
+                                        value
+                                )
+                        ),
+                        ignored -> {}
+                );
+
+
+        button.renderer(
+                modernButtonRenderer(
+                        COLOR_BUTTON,
+                        COLOR_BUTTON_HOVER,
+                        COLOR_BUTTON_DISABLED
+                )
         );
+
+        button.textShadow(false);
+
+
+        button.sizing(
+                Sizing.fill(100),
+                Sizing.fixed(30)
+        );
+
+
+        return button;
     }
 
 
@@ -829,39 +947,195 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
     /*
      * ============================================================
-     * Labels
+     * Modern Button Renderer
      * ============================================================
+     *
+     * No access to AbstractWidget.width/height.
+     *
+     * The XML controls the actual dimensions.
      */
 
-    private void addHeading(
-            FlowLayout parent,
-            String text
+    private static ButtonComponent.Renderer modernButtonRenderer(
+            int normal,
+            int hovered,
+            int disabled
     ) {
 
-        parent.child(
-                UIComponents.label(
-                        Component.literal(text)
-                )
-        );
+        return (graphics, button, delta) -> {
+
+            int color;
+
+            if (!button.active) {
+                color = disabled;
+            } else if (button.isHovered()) {
+                color = hovered;
+            } else {
+                color = normal;
+            }
+
+
+            /*
+             * Use a fixed height matching the XML button height.
+             * Width is supplied by the component itself through
+             * the renderer's available drawing area.
+             */
+
+            int x = button.getX();
+            int y = button.getY();
+
+
+            drawRoundedRect(
+                    graphics,
+                    x,
+                    y,
+                    120,
+                    28,
+                    6,
+                    color
+            );
+        };
     }
 
 
-    private void addDescription(
-            FlowLayout parent,
-            String text
+    /*
+     * ============================================================
+     * Modern Toggle Renderer
+     * ============================================================
+     */
+
+    private static ButtonComponent.Renderer modernToggleRenderer(
+            boolean[] state
     ) {
 
-        parent.child(
-                UIComponents.label(
-                        Component.literal(text)
-                )
+        return (graphics, button, delta) -> {
+
+            int x = button.getX();
+            int y = button.getY();
+
+            int width = 46;
+            int height = 22;
+
+            int trackColor =
+                    state[0]
+                            ? COLOR_ACCENT
+                            : 0xFF303744;
+
+
+            drawRoundedRect(
+                    graphics,
+                    x,
+                    y,
+                    width,
+                    height,
+                    height / 2,
+                    trackColor
+            );
+
+
+            int knobRadius = 7;
+
+            int knobX =
+                    state[0]
+                            ? x + width - 11
+                            : x + 11;
+
+            int knobY =
+                    y + height / 2;
+
+
+            graphics.drawCircle(
+                    knobX,
+                    knobY,
+                    32,
+                    knobRadius,
+                    Color.ofArgb(0xFFFFFFFF)
+            );
+        };
+    }
+
+
+    /*
+     * ============================================================
+     * Rounded Rectangle
+     * ============================================================
+     */
+
+    private static void drawRoundedRect(
+            io.wispforest.owo.ui.core.OwoUIGraphics graphics,
+            int x,
+            int y,
+            int width,
+            int height,
+            int radius,
+            int color
+    ) {
+
+        radius =
+                Math.min(
+                        radius,
+                        Math.min(width, height) / 2
+                );
+
+
+        graphics.fill(
+                x + radius,
+                y,
+                x + width - radius,
+                y + height,
+                color
+        );
+
+
+        graphics.fill(
+                x,
+                y + radius,
+                x + width,
+                y + height - radius,
+                color
+        );
+
+
+        Color owoColor =
+                Color.ofArgb(color);
+
+
+        graphics.drawCircle(
+                x + radius,
+                y + radius,
+                24,
+                radius,
+                owoColor
+        );
+
+        graphics.drawCircle(
+                x + width - radius,
+                y + radius,
+                24,
+                radius,
+                owoColor
+        );
+
+        graphics.drawCircle(
+                x + radius,
+                y + height - radius,
+                24,
+                radius,
+                owoColor
+        );
+
+        graphics.drawCircle(
+                x + width - radius,
+                y + height - radius,
+                24,
+                radius,
+                owoColor
         );
     }
 
 
     /*
      * ============================================================
-     * Save / Reset / Cancel
+     * Save / Clear / Cancel
      * ============================================================
      */
 
@@ -871,61 +1145,56 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
          * Save
          */
 
-        button("save").onPress(ignored -> {
+        button("save")
+                .onPress(ignored -> {
 
-            ConfigManager
-                    .get()
-                    .copyFrom(workingConfig);
+                    ConfigManager
+                            .get()
+                            .copyFrom(
+                                    workingConfig
+                            );
 
-            ConfigManager.save();
+                    ConfigManager.save();
 
-            Minecraft
-                    .getInstance()
-                    .setScreen(null);
-        });
+                    Minecraft
+                            .getInstance()
+                            .setScreen(null);
+                });
 
 
         /*
-         * Reset
-         *
-         * This only modifies the working copy.
-         * The real config isn't changed until Save.
+         * Clear
          */
 
-        button("reset").onPress(ignored -> {
+        button("reset")
+                .onPress(ignored -> {
 
-            workingConfig.reset();
+                    workingConfig.reset();
 
-            showCategory(
-                    selectedCategory
-            );
-        });
+                    showCategory(
+                            selectedCategory
+                    );
+                });
 
 
         /*
          * Cancel
          */
 
-        button("cancel").onPress(ignored -> {
+        button("cancel")
+                .onPress(ignored -> {
 
-            Minecraft
-                    .getInstance()
-                    .setScreen(null);
-        });
+                    Minecraft
+                            .getInstance()
+                            .setScreen(null);
+                });
     }
 
 
     /*
      * ============================================================
-     * Runtime XML reload
+     * Runtime reload
      * ============================================================
-     *
-     * Creating a new BaseUIModelScreen causes owo to load the
-     * XML DataSource again.
-     *
-     * We preserve:
-     *   - current edited config values
-     *   - currently selected category
      */
 
     public static void reloadIfOpen() {
@@ -933,9 +1202,11 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
         Minecraft minecraft =
                 Minecraft.getInstance();
 
+
         if (!(minecraft.screen instanceof ConfigScreen oldScreen)) {
             return;
         }
+
 
         ConfigScreen replacement =
                 new ConfigScreen(
@@ -943,14 +1214,13 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
                         oldScreen.selectedCategory
                 );
 
-        minecraft.setScreen(replacement);
+
+        minecraft.setScreen(
+                replacement
+        );
     }
 
 
-    /**
-     * Same as reloadIfOpen(), but safe to call from a thread
-     * other than the Minecraft client thread.
-     */
     public static void reloadIfOpenAsync() {
 
         Minecraft
