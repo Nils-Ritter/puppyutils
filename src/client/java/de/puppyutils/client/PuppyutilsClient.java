@@ -1,6 +1,7 @@
 package de.puppyutils.client;
 
 import de.puppyutils.client.macroClasses.farming.vrow.AutoFarmingVrow;
+import de.puppyutils.client.macroClasses.fishing.BasicFishingMacro;
 import de.puppyutils.client.routing.MacroCommands;
 import de.puppyutils.client.routing.WaypointRenderer;
 import de.puppyutils.client.screens.ConfigScreen;
@@ -45,6 +46,12 @@ public class PuppyutilsClient implements ClientModInitializer {
             KeyMapping.Category.MISC
     );
 
+    public static final KeyMapping START_FISHING = new KeyMapping(
+            "key.puppyutils.start_fishing_keybinding",
+            GLFW.GLFW_KEY_F10,
+            KeyMapping.Category.MISC
+    );
+
     @Override
     public void onInitializeClient() {
         LOGGER.info("Welcome to: \n__________                            ____ ___   __  .__.__          \n" +
@@ -67,6 +74,7 @@ public class PuppyutilsClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if(STOP_KEYBINDING.consumeClick()){
                 AutoFarmingVrow.control.stop();
+                BasicFishingMacro.control.stop();
             }else if(START_LEFT.consumeClick()){
                 AutoFarmingVrow.control.start(AutoFarmingVrow.dir.left);
             }else if(START_RIGHT.consumeClick()) {
@@ -74,6 +82,8 @@ public class PuppyutilsClient implements ClientModInitializer {
             }else if(CONF_KEYBINDING.consumeClick()){
                 Minecraft.getInstance().setScreen(new ConfigScreen());
             }
+
+            FishingStateDetector.tick();
         });
     }
 }
