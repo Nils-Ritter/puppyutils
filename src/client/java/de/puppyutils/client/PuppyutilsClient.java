@@ -52,6 +52,15 @@ public class PuppyutilsClient implements ClientModInitializer {
             KeyMapping.Category.MISC
     );
 
+    private void init(){
+        CommandHandler.register(); 
+        WaypointRenderer.init();
+        MacroCommands.init();
+        PlayerStatsHelper.init();
+        PuppyUtilsCommand.register();
+        ConfigManager.load();
+    }
+
     @Override
     public void onInitializeClient() {
         LOGGER.info("Welcome to: \n__________                            ____ ___   __  .__.__          \n" +
@@ -61,12 +70,7 @@ public class PuppyutilsClient implements ClientModInitializer {
                 " |____|   |____/|   __/|   __// ____||______/   |__| |__|____/____  >\n" +
                 "                |__|   |__|   \\/                                  \\/ \n");
 
-        CommandHandler.register(); 
-        WaypointRenderer.init();
-        MacroCommands.init();
-        PlayerStatsHelper.init();
-        PuppyUtilsCommand.register();
-        ConfigManager.load();
+        init();
 
         //The following comment was written by @Nils-Ritter's friends bunny, Sven:
         //opl
