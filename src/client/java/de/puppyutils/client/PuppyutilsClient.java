@@ -68,7 +68,7 @@ public class PuppyutilsClient implements ClientModInitializer {
         PuppyUtilsCommand.register();
         ConfigManager.load();
 
-        //The following comment was written by @nille_vanille's friends bunny, Sven:
+        //The following comment was written by @Nils-Ritter's friends bunny, Sven:
         //opl
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
