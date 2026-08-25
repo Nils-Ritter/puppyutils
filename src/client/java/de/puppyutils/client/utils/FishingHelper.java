@@ -30,6 +30,10 @@ public final class FishingHelper {
         });
     }
 
+
+    /*
+     * Reels the rod in.
+     */
     public static void reel() {
         MC.execute(() -> {
             LocalPlayer player = MC.player;
@@ -46,7 +50,7 @@ public final class FishingHelper {
         });
     }
 
-    /**
+    /*
      * Blocks the automation thread until a fish bites.
      */
     public static void waitForFish() throws InterruptedException {
@@ -59,7 +63,7 @@ public final class FishingHelper {
         }
     }
 
-    /**
+    /*
      * Called by the client-side detection code.
      */
     public static void onFishCaught() {
